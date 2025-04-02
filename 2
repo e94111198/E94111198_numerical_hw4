@@ -1,0 +1,27 @@
+import numpy as np
+import scipy.integrate as spi
+
+def f(x):
+    return x**2 * np.log(x)
+
+def gauss_quadrature(a, b, n):
+    # 取得勒讓德多項式的根與權重
+    x, w = np.polynomial.legendre.leggauss(n)
+    # 變換積分區間到 [a, b]
+    t = 0.5 * (x + 1) * (b - a) + a
+    return 0.5 * (b - a) * np.sum(w * f(t))
+
+# 設定積分區間
+a, b = 1, 1.5
+
+# 計算 Gaussian Quadrature 近似值
+I_gauss_3 = gauss_quadrature(a, b, 3)
+I_gauss_4 = gauss_quadrature(a, b, 4)
+
+# 計算精確積分值
+I_exact, _ = spi.quad(f, a, b)
+
+# 輸出結果
+print(f"Gaussian Quadrature (n=3): {I_gauss_3:.6f}")
+print(f"Gaussian Quadrature (n=4): {I_gauss_4:.6f}")
+print(f"Exact Integral Value: {I_exact:.6f}")
