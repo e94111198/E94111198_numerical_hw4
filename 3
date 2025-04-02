@@ -1,0 +1,52 @@
+import numpy as np
+import scipy.integrate as spi
+
+def f(x, y):
+    return 2 * y * np.sin(x) + np.cos(x)**2
+
+def simpsons_double_integral(a, b, n, m):
+    x = np.linspace(a, b, n + 1)
+    hx = (b - a) / n
+    integral = 0
+    
+    for i in range(n + 1):
+        xi = x[i]
+        ya, yb = np.sin(xi), np.cos(xi)
+        y = np.linspace(ya, yb, m + 1)
+        hy = (yb - ya) / m
+        
+        fy = f(xi, y)
+        
+        simpson_y = hy / 3 * (fy[0] + 4 * np.sum(fy[1:m:2]) + 2 * np.sum(fy[2:m-1:2]) + fy[m])
+        
+        weight = 1 if (i == 0 or i == n) else 2 + 2 * (i % 2)
+        integral += weight * simpson_y
+    
+    return (hx / 3) * integral
+
+def gaussian_double_integral(a, b, n, m):
+    x_nodes, x_weights = np.polynomial.legendre.leggauss(n)
+    x_mapped = 0.5 * (x_nodes + 1) * (b - a) + a
+    
+    integral = 0
+    for i in range(n):
+        xi = x_mapped[i]
+        ya, yb = np.sin(xi), np.cos(xi)
+        y_nodes, y_weights = np.polynomial.legendre.leggauss(m)
+        y_mapped = 0.5 * (y_nodes + 1) * (yb - ya) + ya
+        
+        fy = f(xi, y_mapped)
+        integral += x_weights[i] * np.sum(y_weights * fy) * 0.25 * (yb - ya) * (b - a)
+    
+    return integral
+
+a, b = 0, np.pi / 4
+n, m = 4, 4
+I_simpson = simpsons_double_integral(a, b, n, m)
+I_gauss = gaussian_double_integral(a, b, 3, 3)
+
+I_exact, _ = spi.dblquad(f, a, b, lambda x: np.sin(x), lambda x: np.cos(x))
+
+print(f"Simpson's Rule: {I_simpson:.6f}")
+print(f"Gaussian Quadrature: {I_gauss:.6f}")
+print(f"Exact Integral Value: {I_exact:.6f}")
