@@ -22,6 +22,6 @@ I_gauss_4 = gauss_quadrature(a, b, 4)
 I_exact, _ = spi.quad(f, a, b)
 
 # 輸出結果
-print(f"Gaussian Quadrature (n=3): {I_gauss_3:.6f}")
-print(f"Gaussian Quadrature (n=4): {I_gauss_4:.6f}")
-print(f"Exact Integral Value: {I_exact:.6f}")
+print(f"Gaussian Quadrature (n=3): {I_gauss_3:.8f}")
+print(f"Gaussian Quadrature (n=4): {I_gauss_4:.8f}")
+print(f"Exact Integral Value: {I_exact:.8f}")
